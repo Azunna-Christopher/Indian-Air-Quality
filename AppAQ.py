@@ -159,12 +159,12 @@ if page == "Dashboard Overview":
     st.dataframe(filtered_df.head(10), use_container_width=True)
 
 # -------------------------------------------
-# 5. DEEP DIVE ANALYTICS
+# 5. DEEP DIVE ANALYTICS (INTERACTIVE)
 # -------------------------------------------
 elif page == "Deep Dive Analytics":
     st.title(f"📊 Analytics: {location_title}")
     
-    # User Selection for Chart Type
+    # Chart Selection
     chart_type = st.selectbox(
         "Select Visualization Type:",
         ["Pollutant Breakdown (Bar Chart)", "AQI Distribution (Histogram)", "Correlation Heatmap", "Yearly Trends"]
@@ -172,44 +172,85 @@ elif page == "Deep Dive Analytics":
     
     st.markdown("---")
 
-    # 1. Pollutant Breakdown
+    # 1. Pollutant Breakdown (Interactive Bar)
     if chart_type == "Pollutant Breakdown (Bar Chart)":
         st.subheader(f"Average Pollutant Levels in {location_title}")
+        st.caption("Hover over bars to see exact concentration values.")
+        
         pollutants = ['PM2.5', 'PM10', 'NO', 'NO2', 'NOx', 'NH3', 'CO', 'SO2', 'O3']
         
-        # Calculate means
-        avg_levels = filtered_df[pollutants].mean().sort_values(ascending=False)
+        # Prepare data for Plotly
+        avg_levels = filtered_df[pollutants].mean().reset_index()
+        avg_levels.columns = ['Pollutant', 'Concentration']
+        avg_levels = avg_levels.sort_values(by='Concentration', ascending=True)
         
-        fig, ax = plt.subplots(figsize=(10, 6))
-        sns.barplot(x=avg_levels.values, y=avg_levels.index, palette="magma", ax=ax)
-        ax.set_xlabel("Concentration (µg/m³)")
-        st.pyplot(fig)
+        # Plotly Bar Chart
+        fig = px.bar(
+            avg_levels, 
+            x='Concentration', 
+            y='Pollutant', 
+            orientation='h',
+            text='Concentration',
+            color='Concentration',
+            color_continuous_scale='Viridis',
+            title="Average Concentration (µg/m³)"
+        )
+        fig.update_traces(texttemplate='%{text:.2f}', textposition='outside')
+        st.plotly_chart(fig, use_container_width=True)
 
-    # 2. Distribution
+    # 2. Distribution (Interactive Histogram)
     elif chart_type == "AQI Distribution (Histogram)":
         st.subheader("Frequency of AQI Levels")
-        fig, ax = plt.subplots(figsize=(10, 6))
-        sns.histplot(filtered_df['AQI'], bins=40, kde=True, color='#E67E22', ax=ax)
-        ax.set_xlabel("Air Quality Index (AQI)")
-        st.pyplot(fig)
+        st.caption("Click and drag on the chart to zoom in.")
+        
+        # Plotly Histogram with Marginal Box Plot
+        fig = px.histogram(
+            filtered_df, 
+            x='AQI', 
+            nbins=50, 
+            color_discrete_sequence=['#E67E22'],
+            marginal="box", # Adds a boxplot on top to show outliers
+            title="Distribution of Air Quality Index"
+        )
+        fig.update_layout(bargap=0.1)
+        st.plotly_chart(fig, use_container_width=True)
 
-    # 3. Correlation
+    # 3. Correlation (Interactive Heatmap)
     elif chart_type == "Correlation Heatmap":
         st.subheader("Pollutant Correlation Matrix")
-        st.write("How do different chemicals relate to each other in this region?")
-        numeric_df = filtered_df.select_dtypes(include=['float64', 'int64'])
+        st.caption("Hover over cells to view correlation coefficients.")
         
-        fig, ax = plt.subplots(figsize=(10, 8))
-        sns.heatmap(numeric_df.corr(), cmap='coolwarm', ax=ax)
-        st.pyplot(fig)
+        numeric_df = filtered_df.select_dtypes(include=['float64', 'int64'])
+        corr_matrix = numeric_df.corr()
+        
+        # Plotly Heatmap
+        fig = px.imshow(
+            corr_matrix,
+            text_auto='.2f', # Show numbers rounded to 2 decimals
+            aspect="auto",
+            color_continuous_scale='RdBu_r', # Red-Blue (Red = High positive correlation)
+            origin='lower',
+            title="Correlation Matrix"
+        )
+        st.plotly_chart(fig, use_container_width=True)
 
-    # 4. Yearly Trends (Boxplot)
+    # 4. Yearly Trends (Interactive Boxplot)
     elif chart_type == "Yearly Trends":
         st.subheader("AQI Variance by Year")
+        st.caption("See the spread of data. Dots represent outliers.")
+        
         if 'Year_bin' in filtered_df.columns:
-            fig, ax = plt.subplots(figsize=(10, 6))
-            sns.boxplot(x='Year_bin', y='AQI', data=filtered_df, palette="viridis", ax=ax)
-            st.pyplot(fig)
+            # Plotly Box Plot
+            fig = px.box(
+                filtered_df, 
+                x='Year_bin', 
+                y='AQI', 
+                color='Year_bin',
+                title="Yearly AQI Ranges",
+                points="outliers" # Only show outlier points to keep it clean
+            )
+            fig.update_layout(showlegend=False)
+            st.plotly_chart(fig, use_container_width=True)
         else:
             st.error("Year column not found in dataset.")
 
@@ -273,3 +314,4 @@ elif page == "AI Forecaster":
             st.info(f"**Air Quality Status:** {status}")
 
             st.progress(min(prediction/500, 1.0))
+
