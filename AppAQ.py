@@ -4,6 +4,7 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 import joblib
+import plotly.express as px 
 
 # -------------------------------------------
 # 1. PAGE CONFIGURATION & STYLING
@@ -314,4 +315,5 @@ elif page == "AI Forecaster":
             st.info(f"**Air Quality Status:** {status}")
 
             st.progress(min(prediction/500, 1.0))
+
 
