@@ -11,7 +11,7 @@ import plotly.express as px
 # -------------------------------------------
 st.set_page_config(
     page_title="EcoVis | Air Quality Forecaster",
-    page_icon="🌍",
+    page_icon="🌿",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -169,20 +169,20 @@ elif page == "Deep Dive Analytics":
     chart_type = st.selectbox(
         "Select Analysis Level:",
         [
-            "1. National Trend (2015-2020)",
-            "2. AQI per City per Year (Comparison)",
-            "3. Pollutant Concentration Heatmap (Cities vs Chemicals)",
-            "4. Top 10 Cities by Pollutant",
-            "5. Pollutant Distribution Analysis"
+            "National Trend (Line Chart)",
+            "AQI per City per Year (Comparison)",
+            "Pollutant Concentration Heatmap (Cities vs Chemicals)",
+            "Top 10 Cities by Pollutant",
+            "Pollutant Distribution Analysis"
         ]
     )
     
     st.markdown("---")
 
     # ---------------------------------------------------------
-    # CHART 1: LINE CHART OF AVERAGE AQI IN INDIA (2015-2020)
+    # CHART 1: LINE CHART OF AVERAGE AQI IN INDIA
     # ---------------------------------------------------------
-    if chart_type == "1. National Trend (2015-2020)":
+    if chart_type == "National Trend (Line Chart)":
         st.subheader("📈 National Average AQI Trend (2015-2020)")
         st.caption("This chart aggregates data from all stations across India to show the overall trend.")
         
@@ -210,7 +210,7 @@ elif page == "Deep Dive Analytics":
     # ---------------------------------------------------------
     # CHART 2: BAR CHART OF AGGREGATE AVG AQI PER CITY PER YEAR
     # ---------------------------------------------------------
-    elif chart_type == "2. AQI per City per Year (Comparison)":
+    elif chart_type == "AQI per City per Year (Comparison)":
         st.subheader("🏙️ Aggregate Average AQI per City (Yearly Breakdown)")
         st.caption("Compare how different cities have performed across different years.")
         
@@ -236,7 +236,7 @@ elif page == "Deep Dive Analytics":
     # ---------------------------------------------------------
     # CHART 3: CORRELATION HEATMAP (CITIES vs POLLUTANTS)
     # ---------------------------------------------------------
-    elif chart_type == "3. Pollutant Concentration Heatmap (Cities vs Chemicals)":
+    elif chart_type == "Pollutant Concentration Heatmap (Cities vs Chemicals)":
         st.subheader("🔥 Intensity Heatmap: Cities vs Pollutants")
         st.caption("Which cities have the highest intensity of specific chemical pollutants?")
         
@@ -260,7 +260,7 @@ elif page == "Deep Dive Analytics":
     # ---------------------------------------------------------
     # CHART 4: TOP 10 CITIES (FILTERABLE BY YEAR & POLLUTANT)
     # ---------------------------------------------------------
-    elif chart_type == "4. Top 10 Cities by Pollutant":
+    elif chart_type == "Top 10 Cities by Pollutant":
         st.subheader("🏆 Top 10 Most Polluted Cities")
         
         c1, c2 = st.columns(2)
@@ -295,7 +295,7 @@ elif page == "Deep Dive Analytics":
     # ---------------------------------------------------------
     # CHART 5: HISTOGRAM OF DIFFERENT POLLUTANT DISTRIBUTIONS
     # ---------------------------------------------------------
-    elif chart_type == "5. Pollutant Distribution Analysis":
+    elif chart_type == "Pollutant Distribution Analysis":
         st.subheader("📊 Distribution of Pollutant Levels")
         st.caption("Analyze the spread and frequency of different pollutants.")
         
