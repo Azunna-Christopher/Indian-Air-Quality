@@ -10,7 +10,7 @@ import joblib
 # -------------------------------------------
 st.set_page_config(
     page_title="EcoVis | Air Quality Forecaster",
-    page_icon="🌿",
+    page_icon="🌍",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -271,4 +271,5 @@ elif page == "AI Forecaster":
         
         with res_col2:
             st.info(f"**Air Quality Status:** {status}")
+
             st.progress(min(prediction/500, 1.0))
